@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тренажер: Алгебра логики — Часть 1</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .quiz-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 840px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      padding: 32px;
+      position: relative;
+    }
+    .start-screen {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .start-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 14px;
+    }
+    .start-desc {
+      font-size: 16px;
+      color: #475569;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .rules-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .rules-title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+    .rules-list {
+      list-style-type: decimal;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rules-list li {
+      font-size: 15px;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 30px;
+      font-size: 15.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #2563eb;
+      transition: width 0.3s ease;
+    }
+    .header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #64748b;
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-btn {
+      background: #e2e8f0;
+      color: #475569;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: none;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: #cbd5e1;
+      color: #0f172a;
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .question-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #0f172a;
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    .op-header {
+      font-size: 19px;
+      font-weight: 700;
+      color: #0f172a;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+    .op-header .op-symbol {
+      color: #2563eb;
+      font-weight: 800;
+      font-size: 21px;
+      margin-left: 6px;
+    }
+    .task-desc {
+      font-size: 17px;
+      color: #334155;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .task-instruction {
+      font-size: 17px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 18px;
+    }
+    .task-comment {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #64748b;
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin: 12px 0 16px 0;
+      font-size: 15.5px;
+      color: #475569;
+      line-height: 1.6;
+    }
+    .formula-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 16px 22px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .formula-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .formula-sub {
+      font-size: 14.5px;
+      color: #64748b;
+      margin-top: 8px;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+    .not {
+      text-decoration: overline;
+      padding-top: 2px;
+      display: inline-block;
+    }
+    .table-container {
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column !important;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+    table.logic-table {
+      border-collapse: collapse;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+      margin: 0 auto;
+    }
+    table.logic-table th, table.logic-table td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 24px;
+      text-align: center;
+      font-size: 16.5px;
+      font-weight: 600;
+      font-style: normal;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    table.logic-table th {
+      background: #f8fafc;
+      color: #1e293b;
+      font-weight: 700;
+    }
+    .table-select, .match-select {
+      font-size: 16px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      cursor: pointer;
+      color: #1e293b;
+      max-width: 270px;
+    }
+    .correct-cell {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+    }
+    .wrong-cell {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+    }
+    .btn-check-action {
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      align-self: center;
+    }
+    .btn-check-action:hover {
+      background: #1e293b;
+    }
+    .match-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .match-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 18px;
+    }
+    .match-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.45;
+      flex: 1;
+    }
+    .dnd-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .dnd-item {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 15.5px;
+      font-weight: 600;
+      color: #1e293b;
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
+    }
+    .dnd-item:active {
+      cursor: grabbing;
+    }
+    .dnd-item.dragging {
+      opacity: 0.4;
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+    .dnd-handle {
+      margin-right: 14px;
+      color: #94a3b8;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .dnd-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 700;
+      margin-right: 12px;
+    }
+    .feedback-box {
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.55;
+    }
+    .feedback-box.correct {
+      background: #ecfdf5;
+      border-left: 5px solid #10b981;
+      color: #065f46;
+    }
+    .feedback-box.wrong {
+      background: #fef2f2;
+      border-left: 5px solid #ef4444;
+      color: #991b1b;
+    }
+    .next-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      margin-left: auto;
+      transition: background 0.2s;
+    }
+    .next-btn:hover {
+      background: #1d4ed8;
+    }
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .result-score {
+      font-size: 44px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 12px 0;
+    }
+    .result-msg {
+      font-size: 15px;
+      color: #475569;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .results-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0 28px 0;
+    }
+    .badge-item {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .badge-item.correct {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 2px solid #10b981;
+    }
+    .badge-item.wrong {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 2px solid #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-card">
+    <div class="start-screen" id="start-screen">
+      <h1 class="start-title">Алгебра логики: Часть 1</h1>
+      <p class="start-desc">Базовый теоретический модуль: таблицы истинности 5 ключевых операций, их свойства и приоритет выполнения действий.</p>
+      
+      <div class="rules-card">
+        <div class="rules-title">Инструкция к прохождению:</div>
+        <ol class="rules-list">
+          <li><strong>Начисление баллов:</strong> 1 балл дается только за правильное выполнение задания с первой попытки.</li>
+          <li><strong>Разбор решений:</strong> после проверки выводится подробный комментарий к правилу.</li>
+          <li><strong>Порядок:</strong> переход открывается только после правильного заполнения полей.</li>
+        </ol>
+      </div>
+      <button class="btn-primary" onclick="startQuiz()">Начать часть 1</button>
+    </div>
+
+    <div id="quiz-content" style="display: none;">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div class="header-info">
+        <span id="question-number">Вопрос 1 из 11</span>
+        <div class="nav-controls">
+          <button class="nav-btn" onclick="skipQuestion()" title="Перейти к следующему вопросу без сохранения ответа">Пропустить →</button>
+        </div>
+        <span id="score-counter">Баллы: 0</span>
+      </div>
+      <div class="question-title" id="question-text"></div>
+      
+      <div class="formula-card" id="formula-box" style="display: none;">
+        <div class="formula-text" id="formula-content"></div>
+        <div class="formula-sub" id="formula-sub" style="display: none;"></div>
+      </div>
+
+      <div class="table-container" id="table-box" style="display: none;"></div>
+      <div class="match-container" id="match-box" style="display: none;"></div>
+      <div class="dnd-container" id="dnd-box" style="display: none;"></div>
+
+      <div class="feedback-box" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Продолжить</button>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+      <h2>Часть 1 завершена</h2>
+      <div class="result-score" id="final-score">0 / 11</div>
+      <p class="result-msg" id="final-message"></p>
+      
+      <div style="font-weight: 600; color: #334155; margin-bottom: 8px;">Результаты по заданиям:</div>
+      <div class="results-badges" id="results-badges"></div>
+
+      <button class="btn-primary" onclick="restartQuiz()">Пройти повторно</button>
+    </div>
+  </div>
+
+  <script>
+    const questionsData = [
+      // 1. Отрицание
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Инверсия (логическое отрицание, частица «НЕ») <span class="op-symbol">¬</span></div>
+          <p class="task-desc">Операция меняет значение высказывания на противоположное: «НЕ 1» дает 0, а «НЕ 0» дает 1.</p>
+          <p class="task-instruction">Заполните таблицу истинности:</p>
+        `,
+        formula: "F = <span class='not'>A</span>",
+        subText: "Отрицание инвертирует входящее значение",
+        fillTableData: {
+          headers: ["A", "<span class='not'>A</span>"],
+          singleArg: true,
+          rows: [
+            { a: "0", ans: 1 },
+            { a: "1", ans: 0 }
+          ]
+        },
+        hintText: "Отрицание («НЕ») меняет значение на обратное: из 0 получается 1, а из 1 получается 0."
+      },
+
+      // 2. КОНЪЮНКЦИЯ (Шаг 1)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Конъюнкция (логическое «И», умножение) <span class="op-symbol">∧</span></div>
+          <p class="task-desc">Ученик пойдет гулять (F = 1), если сделает уроки (A) <strong>И</strong> уберет комнату (B).</p>
+          <p class="task-instruction">Заполните таблицу истинности для этой ситуации:</p>
+        `,
+        formula: "F = Уроки ∧ Уборка",
+        subText: "Союз «И» требует одновременного выполнения обоих условий (1 ∧ 1 = 1)",
+        fillTableData: {
+          headers: ["Сделал уроки (A)", "Убрал комнату (B)", "Гулять (F)"],
+          rows: [
+            { a: "0 (нет)", b: "0 (нет)", ans: 0 },
+            { a: "0 (нет)", b: "1 (да)", ans: 0 },
+            { a: "1 (да)", b: "0 (нет)", ans: 0 },
+            { a: "1 (да)", b: "1 (да)", ans: 1 }
+          ]
+        },
+        hintText: "Конъюнкция истинна только тогда, когда выполнены оба требования (1 ∧ 1 = 1)."
+      },
+
+      // 3. КОНЪЮНКЦИЯ (Шаг 2)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Конъюнкция как умножение <span class="op-symbol">∧</span></div>
+          <p class="task-desc">В алгебре логики операция рассматривается как арифметическое умножение аргументов.</p>
+          <div class="task-comment">Перемножьте значения аргументов по правилам обычной школьной арифметики.</div>
+          <p class="task-instruction">Заполните значения для A ∧ B:</p>
+        `,
+        formula: "F = A ∧ B",
+        subText: "Аналог: A • B",
+        fillTableData: {
+          headers: ["A", "B", "A ∧ B"],
+          rows: [
+            { a: "0", b: "0", ans: 0 },
+            { a: "0", b: "1", ans: 0 },
+            { a: "1", b: "0", ans: 0 },
+            { a: "1", b: "1", ans: 1 }
+          ]
+        },
+        hintText: "Проверьте умножение: 0 • 0 = 0, 0 • 1 = 0, 1 • 0 = 0, 1 • 1 = 1. Результат равен 1 только при перемножении двух единиц."
+      },
+
+      // 4. ДИЗЪЮНКЦИЯ (Шаг 1)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Дизъюнкция (логическое «ИЛИ», сложение) <span class="op-symbol">∨</span></div>
+          <p class="task-desc">Проход в музей разрешен (F = 1), если предъявлен билет (A) <strong>ИЛИ</strong> специальное удостоверение (B).</p>
+          <p class="task-instruction">Заполните таблицу истинности для этой ситуации:</p>
+        `,
+        formula: "F = Билет ∨ Удостоверение",
+        subText: "Связке «ИЛИ» достаточно выполнения хотя бы одного из условий",
+        fillTableData: {
+          headers: ["Есть билет (A)", "Есть удостоверение (B)", "Проход (F)"],
+          rows: [
+            { a: "0 (нет)", b: "0 (нет)", ans: 0 },
+            { a: "0 (нет)", b: "1 (да)", ans: 1 },
+            { a: "1 (да)", b: "0 (нет)", ans: 1 },
+            { a: "1 (да)", b: "1 (да)", ans: 1 }
+          ]
+        },
+        hintText: "Дизъюнкция истинна, если выполнено хотя бы одно условие. Ложь возникает только при 0 ∨ 0 = 0."
+      },
+
+      // 5. ДИЗЪЮНКЦИЯ (Шаг 2)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Дизъюнкция как сложение <span class="op-symbol">∨</span></div>
+          <p class="task-desc">В алгебре логики операция рассматривается как арифметическое сложение аргументов.</p>
+          <div class="task-comment">Сложите значения аргументов. Учтите: в двоичной логике нет двойки, поэтому 1 + 1 = 1.</div>
+          <p class="task-instruction">Заполните значения для A ∨ B:</p>
+        `,
+        formula: "F = A ∨ B",
+        subText: "Аналог: A + B",
+        fillTableData: {
+          headers: ["A", "B", "A ∨ B"],
+          rows: [
+            { a: "0", b: "0", ans: 0 },
+            { a: "0", b: "1", ans: 1 },
+            { a: "1", b: "0", ans: 1 },
+            { a: "1", b: "1", ans: 1 }
+          ]
+        },
+        hintText: "Проверьте сложение: 0 + 0 = 0, 0 + 1 = 1, 1 + 0 = 1, 1 + 1 = 1. Ложь возникает только при двух нулях."
+      },
+
+      // 6. ИМПЛИКАЦИЯ (Шаг 1)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Импликация (логическое следование) <span class="op-symbol">→</span></div>
+          <p class="task-desc">Договор: «Если проект сдан вовремя (A), то выплачивается премия (B)». Нарушением (0) считается только ситуация, когда проект сдали, а премию не выплатили (1 → 0).</p>
+          <div class="task-comment">Если проект не сдан (A = 0), договор не нарушен в любом случае (1): премию могли выплатить по другому поводу или не выплачивать вовсе.</div>
+          <p class="task-instruction">Заполните таблицу истинности для договора:</p>
+        `,
+        formula: "F = Проект сдан → Премия выплачена",
+        subText: "Обещание нарушено (0) исключительно при 1 → 0",
+        fillTableData: {
+          headers: ["Проект сдан (A)", "Премия выплачена (B)", "Договор соблюден (F)"],
+          rows: [
+            { a: "0 (нет)", b: "0 (нет)", ans: 1 },
+            { a: "0 (нет)", b: "1 (да)", ans: 1 },
+            { a: "1 (да)", b: "0 (нет)", ans: 0 },
+            { a: "1 (да)", b: "1 (да)", ans: 1 }
+          ]
+        },
+        hintText: "Если условие не наступило (A = 0), обещание не нарушено ни при каких обстоятельствах (F = 1). Ложь возникает только при 1 → 0 = 0."
+      },
+
+      // 7. ИМПЛИКАЦИЯ (Шаг 2)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Проверка импликации через отношение ≤ <span class="op-symbol">→</span></div>
+          <p class="task-desc">Импликацию A → B удобно проверять как математическое сравнение <strong>A ≤ B</strong> («меньше или равно»).</p>
+          <div class="task-comment">Сравните значения A и B в каждой строке: если неравенство верное, результат равен 1, если неверное — 0.</div>
+          <p class="task-instruction">Заполните стандартную таблицу истинности для A → B:</p>
+        `,
+        formula: "A → B &nbsp;&nbsp;↔&nbsp;&nbsp; A ≤ B",
+        subText: "Проверяйте истинность неравенства для каждой пары значений",
+        fillTableData: {
+          headers: ["A", "B", "A → B"],
+          rows: [
+            { a: "0", b: "0", ans: 1 },
+            { a: "0", b: "1", ans: 1 },
+            { a: "1", b: "0", ans: 0 },
+            { a: "1", b: "1", ans: 1 }
+          ]
+        },
+        hintText: "Проверьте неравенство A ≤ B: 0 ≤ 0 (1), 0 ≤ 1 (1), 1 ≤ 1 (1). И только 1 ≤ 0 ложно (0)."
+      },
+
+      // 8. ЭКВИВАЛЕНЦИЯ (Шаг 1)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Эквиваленция (логическое тождество) <span class="op-symbol">↔</span></div>
+          <p class="task-desc">Пример: «Автомат выдает напиток (B) тогда и только тогда, когда внесена монета (A)».</p>
+          <div class="task-comment">Система исправна (1), если события происходят синхронно (1, 1 или 0, 0). Несовпадение (монету взял, но не налил, или налил без оплаты) означает сбой (0).</div>
+          <p class="task-instruction">Заполните таблицу истинности для автомата:</p>
+        `,
+        formula: "F = Внесена монета ↔ Выдан напиток",
+        subText: "Тождество истинно только при синхронном наступлении событий",
+        fillTableData: {
+          headers: ["Внесена монета", "Выдан напиток", "Система исправна (F)"],
+          rows: [
+            { a: "0 (нет)", b: "0 (нет)", ans: 1 },
+            { a: "0 (нет)", b: "1 (да)", ans: 0 },
+            { a: "1 (да)", b: "0 (нет)", ans: 0 },
+            { a: "1 (да)", b: "1 (да)", ans: 1 }
+          ]
+        },
+        hintText: "Эквиваленция истинна только при одинаковых значениях переменных (0 и 0, либо 1 и 1)."
+      },
+
+      // 9. ЭКВИВАЛЕНЦИЯ (Шаг 2)
+      {
+        type: "fill_table",
+        text: `
+          <div class="op-header">Эквиваленция как проверка на равенство <span class="op-symbol">↔</span></div>
+          <p class="task-desc">Операция соответствует проверке на равенство аргументов (A == B): одинаковые дают 1, разные дают 0.</p>
+          <p class="task-instruction">Заполните математическую таблицу для A ↔ B:</p>
+        `,
+        formula: "F = A ↔ B",
+        subText: "Логическое равенство значений (A == B)",
+        fillTableData: {
+          headers: ["A", "B", "A ↔ B"],
+          rows: [
+            { a: "0", b: "0", ans: 1 },
+            { a: "0", b: "1", ans: 0 },
+            { a: "1", b: "0", ans: 0 },
+            { a: "1", b: "1", ans: 1 }
+          ]
+        },
+        hintText: "Строки с совпадающими аргументами (0,0 и 1,1) дают 1, остальные строки дают 0."
+      },
+
+      // 10. Сопоставление свойств
+      {
+        type: "matching",
+        text: `
+          <div class="op-header">Обобщение свойств логических операций</div>
+          <p class="task-desc">Сопоставьте словесное смысловое правило с соответствующей операцией:</p>
+        `,
+        formula: "Свойства базовых логических операций",
+        subText: "Определите операцию по ее определению",
+        matchItems: [
+          { rule: "Ложна только тогда, когда оба высказывания ложны", correctOp: "disj" },
+          { rule: "Истинна только тогда, когда оба высказывания истинны", correctOp: "conj" },
+          { rule: "Ложна только тогда, когда первое высказывание истинно, а второе ложно", correctOp: "impl" },
+          { rule: "Истинна только тогда, когда оба высказывания имеют одинаковые значения", correctOp: "equiv" }
+        ],
+        optionsList: [
+          { value: "conj", label: "Конъюнкция ∧ (умножение)" },
+          { value: "disj", label: "Дизъюнкция ∨ (сложение)" },
+          { value: "impl", label: "Импликация → (следование)" },
+          { value: "equiv", label: "Эквиваленция ↔ (тождество)" }
+        ],
+        hintText: "Дизъюнкция ложна только при двух нулях. Конъюнкция истинна только при двух единицах. Импликация ложна только при 1 → 0. Эквиваленция истинна при совпадении значений."
+      },
+
+      // 11. Drag and Drop приоритетов
+      {
+        type: "dnd_ordering",
+        text: `
+          <div class="op-header">Иерархия приоритета операций</div>
+          <p class="task-desc">Расположите логические операции в порядке убывания их приоритета (перетащите карточки мышью сверху вниз: от действия №1 к действию №5):</p>
+        `,
+        formula: "Порядок выполнения без скобок",
+        subText: "Перетащите элементы, удерживая карточку левой кнопкой мыши",
+        initialItems: [
+          { id: "impl", name: "Импликация → (следование)", correctRank: 4 },
+          { id: "conj", name: "Конъюнкция ∧ (умножение)", correctRank: 2 },
+          { id: "equiv", name: "Эквиваленция ↔ (тождество)", correctRank: 5 },
+          { id: "inv", name: "Отрицание (инверсия)", correctRank: 1 },
+          { id: "disj", name: "Дизъюнкция ∨ (сложение)", correctRank: 3 }
+        ],
+        hintText: "Иерархия без скобок: 1) Отрицание, 2) Конъюнкция ∧ (умножение), 3) Дизъюнкция ∨ (сложение), 4) Импликация → (следование), 5) Эквиваленция ↔ (тождество)."
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let currentQuestionSolved = false;
+    let attemptsThisQuestion = 0;
+    let questionResults = [];
+    let currentDndList = [];
+
+    function startQuiz() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('quiz-content').style.display = 'block';
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      currentQuestionSolved = false;
+      attemptsThisQuestion = 0;
+      const q = questionsData[currentQuestion];
+      
+      document.getElementById('question-number').innerText = `Вопрос ${currentQuestion + 1} из ${questionsData.length}`;
+      document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+      document.getElementById('progress').style.width = `${(currentQuestion / questionsData.length) * 100}%`;
+      document.getElementById('question-text').innerHTML = q.text;
+
+      const formulaBlock = document.getElementById('formula-box');
+      const formulaContent = document.getElementById('formula-content');
+      const formulaSub = document.getElementById('formula-sub');
+
+      if (q.formula) {
+        formulaContent.innerHTML = q.formula;
+        if (q.subText) {
+          formulaSub.innerHTML = q.subText;
+          formulaSub.style.display = 'block';
+        } else {
+          formulaSub.style.display = 'none';
+        }
+        formulaBlock.style.display = 'block';
+      } else {
+        formulaBlock.style.display = 'none';
+      }
+
+      const tableBox = document.getElementById('table-box');
+      const matchBox = document.getElementById('match-box');
+      const dndBox = document.getElementById('dnd-box');
+      tableBox.style.display = 'none';
+      matchBox.style.display = 'none';
+      dndBox.style.display = 'none';
+
+      if (q.type === "fill_table") {
+        let tableHtml = '<table class="logic-table"><thead><tr>';
+        q.fillTableData.headers.forEach(h => {
+          tableHtml += `<th>${h}</th>`;
+        });
+        tableHtml += '</tr></thead><tbody>';
+
+        q.fillTableData.rows.forEach((row, rIdx) => {
+          tableHtml += '<tr>';
+          tableHtml += `<td>${row.a}</td>`;
+          if (!q.fillTableData.singleArg) {
+            tableHtml += `<td>${row.b}</td>`;
+          }
+          tableHtml += `<td>
+              <select class="table-select" id="cell-select-${rIdx}">
+                <option value="">?</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+              </select>
+            </td>
+          </tr>`;
+        });
+        tableHtml += '</tbody></table>';
+        tableHtml += `<button class="btn-check-action" onclick="checkTableAnswer()">Проверить таблицу</button>`;
+        tableBox.innerHTML = tableHtml;
+        tableBox.style.display = 'flex';
+      } else if (q.type === "matching") {
+        let matchHtml = '';
+        q.matchItems.forEach((item, idx) => {
+          matchHtml += `<div class="match-row">
+            <span class="match-label">${item.rule}</span>
+            <select class="match-select" id="match-select-${idx}">
+              <option value="">Выберите операцию...</option>`;
+          q.optionsList.forEach(opt => {
+            matchHtml += `<option value="${opt.value}">${opt.label}</option>`;
+          });
+          matchHtml += `</select></div>`;
+        });
+        matchHtml += `<div style="text-align: center; margin-top: 10px;">
+          <button class="btn-check-action" onclick="checkMatchAnswer()">Проверить сопоставление</button>
+        </div>`;
+        matchBox.innerHTML = matchHtml;
+        matchBox.style.display = 'flex';
+      } else if (q.type === "dnd_ordering") {
+        currentDndList = [...q.initialItems];
+        renderDndList();
+        dndBox.style.display = 'flex';
+      }
+
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'none';
+      feedback.className = 'feedback-box';
+      feedback.innerHTML = '';
+      
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function checkMatchAnswer() {
+      if (currentQuestionSolved) return;
+      const q = questionsData[currentQuestion];
+      const feedback = document.getElementById('feedback');
+
+      let allCorrect = true;
+      let allFilled = true;
+
+      q.matchItems.forEach((item, idx) => {
+        const selectElem = document.getElementById(`match-select-${idx}`);
+        const val = selectElem.value;
+        if (val === "") {
+          allFilled = false;
+        } else if (val !== item.correctOp) {
+          allCorrect = false;
+          selectElem.className = 'match-select wrong-cell';
+        } else {
+          selectElem.className = 'match-select correct-cell';
+        }
+      });
+
+      if (!allFilled) {
+        feedback.className = 'feedback-box wrong';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Выберите операцию для каждого правила.</strong>`;
+        return;
+      }
+
+      if (allCorrect) {
+        currentQuestionSolved = true;
+        q.matchItems.forEach((_, idx) => {
+          document.getElementById(`match-select-${idx}`).disabled = true;
+        });
+
+        if (attemptsThisQuestion === 0) {
+          score++;
+          questionResults[currentQuestion] = true;
+        } else {
+          questionResults[currentQuestion] = false;
+        }
+
+        document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+        feedback.className = 'feedback-box correct';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Верно.</strong> ${q.hintText}`;
+        document.getElementById('next-btn').style.display = 'block';
+      } else {
+        attemptsThisQuestion++;
+        feedback.className = 'feedback-box wrong';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>В сопоставлении допущены ошибки.</strong> ${q.hintText}`;
+      }
+    }
+
+    function renderDndList() {
+      const container = document.getElementById('dnd-box');
+      container.innerHTML = '';
+      
+      currentDndList.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'dnd-item';
+        row.draggable = !currentQuestionSolved;
+        row.dataset.index = index;
+        
+        row.innerHTML = `
+          <span class="dnd-handle">☰</span>
+          <span class="dnd-index">${index + 1}</span>
+          <span>${item.name}</span>
+        `;
+        
+        row.addEventListener('dragstart', handleDragStart);
+        row.addEventListener('dragover', handleDragOver);
+        row.addEventListener('drop', handleDrop);
+        row.addEventListener('dragend', handleDragEnd);
+        
+        container.appendChild(row);
+      });
+
+      if (!currentQuestionSolved) {
+        const btnBox = document.createElement('div');
+        btnBox.style.textAlign = 'center';
+        btnBox.style.marginTop = '10px';
+        btnBox.innerHTML = `<button class="btn-check-action" onclick="checkDndAnswer()">Проверить порядок</button>`;
+        container.appendChild(btnBox);
+      }
+    }
+
+    let draggedItemIndex = null;
+
+    function handleDragStart(e) {
+      if (currentQuestionSolved) return;
+      draggedItemIndex = Number(this.dataset.index);
+      this.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const targetIndex = Number(this.dataset.index);
+      if (draggedItemIndex === null || draggedItemIndex === targetIndex) return;
+
+      const movedItem = currentDndList.splice(draggedItemIndex, 1)[0];
+      currentDndList.splice(targetIndex, 0, movedItem);
+      renderDndList();
+    }
+
+    function handleDragEnd() {
+      this.classList.remove('dragging');
+      draggedItemIndex = null;
+    }
+
+    function checkDndAnswer() {
+      if (currentQuestionSolved) return;
+      const q = questionsData[currentQuestion];
+      const feedback = document.getElementById('feedback');
+
+      let isCorrect = true;
+      currentDndList.forEach((item, idx) => {
+        if (item.correctRank !== idx + 1) {
+          isCorrect = false;
+        }
+      });
+
+      if (isCorrect) {
+        currentQuestionSolved = true;
+        renderDndList();
+
+        if (attemptsThisQuestion === 0) {
+          score++;
+          questionResults[currentQuestion] = true;
+        } else {
+          questionResults[currentQuestion] = false;
+        }
+
+        document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+        feedback.className = 'feedback-box correct';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Верно.</strong> ${q.hintText}`;
+        document.getElementById('next-btn').style.display = 'block';
+      } else {
+        attemptsThisQuestion++;
+        feedback.className = 'feedback-box wrong';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Очередность определена неверно.</strong> ${q.hintText}`;
+      }
+    }
+
+    function checkTableAnswer() {
+      if (currentQuestionSolved) return;
+      const q = questionsData[currentQuestion];
+      const feedback = document.getElementById('feedback');
+      let allCorrect = true;
+      let allFilled = true;
+
+      q.fillTableData.rows.forEach((row, idx) => {
+        const selectElem = document.getElementById(`cell-select-${idx}`);
+        const val = selectElem.value;
+        if (val === "") {
+          allFilled = false;
+        } else if (parseInt(val, 10) !== row.ans) {
+          allCorrect = false;
+          selectElem.className = 'table-select wrong-cell';
+        } else {
+          selectElem.className = 'table-select correct-cell';
+        }
+      });
+
+      if (!allFilled) {
+        feedback.className = 'feedback-box wrong';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Заполните все ячейки таблицы.</strong> Выберите 0 или 1 в каждой строке.`;
+        return;
+      }
+
+      if (allCorrect) {
+        currentQuestionSolved = true;
+        q.fillTableData.rows.forEach((_, idx) => {
+          document.getElementById(`cell-select-${idx}`).disabled = true;
+        });
+
+        if (attemptsThisQuestion === 0) {
+          score++;
+          questionResults[currentQuestion] = true;
+        } else {
+          questionResults[currentQuestion] = false;
+        }
+
+        document.getElementById('score-counter').innerText = `Баллы: ${score}`;
+        feedback.className = 'feedback-box correct';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>Верно.</strong> ${q.hintText}`;
+        document.getElementById('next-btn').style.display = 'block';
+      } else {
+        attemptsThisQuestion++;
+        feedback.className = 'feedback-box wrong';
+        feedback.style.display = 'block';
+        feedback.innerHTML = `<strong>В таблице допущены ошибки.</strong> ${q.hintText}`;
+      }
+    }
+
+    function skipQuestion() {
+      if (questionResults[currentQuestion] === undefined) {
+        questionResults[currentQuestion] = false;
+      }
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questionsData.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quiz-content').style.display = 'none';
+      const resultScreen = document.getElementById('result-screen');
+      resultScreen.style.display = 'block';
+      
+      document.getElementById('final-score').innerText = `${score} / ${questionsData.length}`;
+      const msg = document.getElementById('final-message');
+      
+      if (score === questionsData.length) {
+        msg.innerText = "Отличный результат! Базовые законы, таблицы истинности и порядок приоритетов освоены на максимум.";
+      } else if (score >= 8) {
+        msg.innerText = "Хороший результат. Основные правила понятны, можно переходить к расчетной части.";
+      } else {
+        msg.innerText = "Рекомендуется повторить правила для импликации (1 → 0 = 0) и эквивалентности.";
+      }
+
+      const badgesContainer = document.getElementById('results-badges');
+      badgesContainer.innerHTML = '';
+      questionsData.forEach((_, idx) => {
+        const isSuccess = !!questionResults[idx];
+        const badge = document.createElement('div');
+        badge.className = `badge-item ${isSuccess ? 'correct' : 'wrong'}`;
+        badge.innerText = `№${idx + 1}`;
+        badgesContainer.appendChild(badge);
+      });
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      questionResults = [];
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('start-screen').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
